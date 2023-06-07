@@ -1,4 +1,5 @@
-Beginning with an empty binary search tree, Construct binary search tree by inserting
+Title: - Create Binary Search Tree and perform basic operations on it
+Problem Statement: Beginning with an empty binary search tree, Construct binary search tree by inserting
 the values in the order given. After constructing a binary tree -
 i. Insert new node
 ii. Find number of nodes in longest path
