@@ -1,0 +1,226 @@
+Create ADT that implements the "set" concept and perform following operations:
+a. Add (new Element) -Place a value into the set,
+b. Remove (element) Remove the value
+c. Contains (element) Return true if element is in collection,
+d. Size () Return number of values in collection Iterator () Return an iterator used to loop over collection,
+e. Intersection of two sets,
+f. Union of two sets,
+g. Difference between two sets,
+h. Subset
+
+
+
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Set {
+private:
+    vector<int> elements;
+
+public:
+    Set() {}
+
+    void add(int e) {
+        if (!contains(e)) {
+            elements.push_back(e);
+        }
+    }
+
+    void remove(int e) {
+        for (int i = 0; i < elements.size(); i++) {
+            if (elements[i] == e) {
+                elements.erase(elements.begin() + i);
+                break;
+            }
+        }
+    }
+
+    bool contains(int e) const {
+        for (int i = 0; i < elements.size(); i++) {
+            if (elements[i] == e) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    int size() const {
+        return elements.size();
+    }
+
+    Set intersect(const Set& setB) const {
+        Set result;
+        for (int i = 0; i < elements.size(); i++) {
+            if (setB.contains(elements[i])) {
+                result.add(elements[i]);
+            }
+        }
+        return result;
+    }
+
+    Set unionSet(const Set& setB) const {
+        Set result = setB;
+        for (int i = 0; i < elements.size(); i++) {
+            result.add(elements[i]);
+        }
+        return result;
+    }
+
+    Set difference(const Set& setB) const {
+        Set result;
+        for (int i = 0; i < elements.size(); i++) {
+            if (!setB.contains(elements[i])) {
+                result.add(elements[i]);
+            }
+        }
+        return result;
+    }
+
+    bool isSubsetOf(const Set& setB) const {
+        for (int i = 0; i < elements.size(); i++) {
+            if (!setB.contains(elements[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool isProperSubset(const Set& setB) const {
+        return isSubsetOf(setB) && size() < setB.size();
+    }
+
+    vector<int> getElements() const {
+        return elements;
+    }
+};
+
+Set getSetFromUser() {
+    Set set;
+    int count;
+    cout << "Enter the number of elements in the set: ";
+    cin >> count;
+    for (int i = 0; i < count; i++) {
+        int e;
+        cout << "Enter element " << i + 1 << ": ";
+        cin >> e;
+        set.add(e);
+    }
+    return set;
+}
+
+void printSet(const Set& set) {
+    for (int element : set.getElements()) {
+        cout << element << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    Set setA = getSetFromUser();
+    Set setB = getSetFromUser();
+
+    int choice = 0;
+    while (choice != 10) {
+        cout << "|-------------------|" << endl;
+        cout << "| Menu |" << endl;
+        cout << "| 1. Add to Set A |" << endl;
+        cout << "| 2. Remove from Set A |" << endl;
+        cout << "| 3. Check if Set A contains an element |" << endl;
+        cout << "| 4. Size of Set A |" << endl;
+        cout << "| 5. Intersection of Set A and Set B |" << endl;
+        cout << "| 6. Union of Set A and Set B |" << endl;
+        cout << "| 7. Difference between Set A and Set B |" << endl;
+        cout << "| 8. Check if Set A is a subset of Set B |" << endl;
+        cout << "| 9. Check if Set A is a proper subset of Set B |" << endl;
+        cout << "| 10. Exit |" << endl;
+        cout << "|-------------------|" << endl;
+        cout << "Enter Choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            int e;
+            cout << "Enter Number to Add to Set A: ";
+            cin >> e;
+            setA.add(e);
+            cout << "Set A: ";
+            printSet(setA);
+        } else if (choice == 2) {
+            int e;
+            cout << "Enter Number to Remove from Set A: ";
+            cin >> e;
+            setA.remove(e);
+            cout << "Set A: ";
+            printSet(setA);
+        } else if (choice == 3) {
+            int e;
+            cout << "Enter Number to Search in Set A: ";
+            cin >> e;
+            if (setA.contains(e)) {
+                cout << "Number Present in Set A" << endl;
+            } else {
+                cout << "Number is not Present in Set A" << endl;
+            }
+            cout << "Set A: ";
+            printSet(setA);
+        } else if (choice == 4) {
+            cout << "Set A contains " << setA.size() << " elements" << endl;
+        } else if (choice == 5) {
+            Set intersection = setA.intersect(setB);
+            cout << "Set A: ";
+            printSet(setA);
+            cout << "Set B: ";
+            printSet(setB);
+            cout << "Intersection: ";
+            printSet(intersection);
+        } else if (choice == 6) {
+            Set unionSet = setA.unionSet(setB);
+            cout << "Set A: ";
+            printSet(setA);
+            cout << "Set B: ";
+            printSet(setB);
+            cout << "Union: ";
+            printSet(unionSet);
+        } else if (choice == 7) {
+            Set difference = setA.difference(setB);
+            cout << "Set A: ";
+            printSet(setA);
+            cout << "Set B: ";
+            printSet(setB);
+            cout << "Difference: ";
+            printSet(difference);
+        } else if (choice == 8) {
+            bool isSubset = setA.isSubsetOf(setB);
+            cout << "Set A: ";
+            printSet(setA);
+            cout << "Set B: ";
+            printSet(setB);
+            if (isSubset) {
+                cout << "Set A is a Subset of Set B" << endl;
+            } else {
+                cout << "Set A is not a Subset of Set B" << endl;
+            }
+        } else if (choice == 9) {
+            bool isProperSubset = setA.isProperSubset(setB);
+            cout << "Set A: ";
+            printSet(setA);
+            cout << "Set B: ";
+            printSet(setB);
+            if (isProperSubset) {
+                cout << "Set A is a Proper Subset of Set B" << endl;
+            } else {
+                cout << "Set A is not a Proper Subset of Set B" << endl;
+            }
+        } else if (choice == 10) {
+            cout << "Exiting..." << endl;
+        } else {
+            cout << "Invalid Choice! Please try again." << endl;
+        }
+
+        cout << endl;
+    }
+
+    return 0;
+}
