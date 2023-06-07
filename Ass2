@@ -1,0 +1,175 @@
+Consider telephone book database of N clients. Make use of a hash table
+implementation to quickly look up client‘s telephone number. Make use of two collision handling techniques
+and compare them using number of comparisons required to find a set of telephone numbers
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+vector<pair<string, int>> arr;
+
+int linerpro(int hv, int n) {
+    int temphv = hv;
+    while (arr[temphv].second != 0) {
+        temphv = (temphv + 1) % n;
+        if (temphv == hv)
+            return -1;
+    }
+    return temphv;
+}
+
+int quad(int hv, int n) {
+    int flag = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i].second == 0) {
+            flag = 1;
+            break;
+        }
+    }
+    if (flag == 0)
+        return -1;
+    int temphv = hv;
+    while (arr[temphv].second != 0) {
+        for (int l = 0; l < n; l++) {
+            temphv = (temphv + (l * l)) % n;
+            if (arr[temphv].second == 0)
+                return temphv;
+        }
+    }
+    return temphv;
+}
+
+void hashfunc(int n) {
+    cout << "Enter 0 for linear probing\nEnter 1 for double hashing\n";
+    int ch;
+    cin >> ch;
+    if (ch == 0) {
+        cout << "Using Linear Probing\n";
+    } else if (ch == 1) {
+        cout << "Using Quadratic Probing\n";
+    }
+
+    for (int j = 0; j < n; j++) {
+        string name;
+        int number;
+        cout << "Enter name: ";
+        cin >> name;
+        cout << "Enter number: ";
+        cin >> number;
+
+        int sum1 = 0;
+        int tempno = number;
+        while (tempno != 0) {
+            sum1 = sum1 + (tempno % 10);
+            tempno = tempno / 10;
+        }
+
+        int hv = (sum1 % n);
+        if (ch == 0) {
+            int newhv = linerpro(hv, n);
+            if (newhv == -1) {
+                cout << "Array is full\n";
+            } else {
+                cout << "Hash Value: " << newhv << "\n";
+                arr[newhv] = make_pair(name, number);
+            }
+        } else if (ch == 1) {
+            int newhv = quad(hv, n);
+            if (newhv == -1) {
+                cout << "Array is full\n";
+            } else {
+                cout << "Hash Value: " << newhv << "\n";
+                arr[newhv] = make_pair(name, number);
+            }
+        }
+    }
+}
+
+void Search() {
+    cout << "Enter 1: By Using Linear Probing\n";
+    cout << "Enter 2: By Using Quadratic Probing\n";
+    cout << "Enter 3: To Exit\n";
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        int sn;
+        cout << "Enter the number to search: ";
+        cin >> sn;
+
+        int hv = sn % arr.size();
+        int temphv = hv;
+        if (arr[hv].second == sn) {
+            cout << arr[hv].first << " " << arr[hv].second << "\n";
+        } else {
+            while (arr[hv].second != sn) {
+                hv = (hv + 1) % arr.size();
+                if (temphv == hv && arr[hv].second != sn) {
+                    cout << "Not found\n";
+                    return;
+                }
+            }
+            cout << arr[hv].first << " " << arr[hv].second << "\n";
+        }
+    } else if (choice == 2) {
+        int sn;
+        cout << "Enter the number to search: ";
+        cin >> sn;
+
+        int sum1 = 0;
+        int tempno = sn;
+        while (tempno != 0) {
+            sum1 = sum1 + (tempno % 10);
+            tempno = tempno / 10;
+        }
+
+        int hv = (sum1 % arr.size());
+        int temphv = hv;
+        if (arr[hv].second == sn) {
+            cout << arr[hv].first << " " << arr[hv].second << "\n";
+        } else {
+            while (arr[hv].second != sn) {
+                for (int x = 0; x < arr.size(); x++) {
+                    hv = (hv + (x * x)) % arr.size();
+                    if (arr[hv].second == sn)
+                        break;
+                }
+                if (temphv == hv && arr[hv].second != sn) {
+                    cout << "Not found\n";
+                    return;
+                }
+            }
+            cout << arr[hv].first << " " << arr[hv].second << "\n";
+        }
+    }
+}
+
+int main() {
+    while (true) {
+        cout << "MENU\n";
+        cout << "Enter 1: To Insert\n";
+        cout << "Enter 2: To Search\n";
+        cout << "Enter 3: To Exit\n";
+        int CH;
+        cout << "Enter your choice: ";
+        cin >> CH;
+
+        if (CH == 1) {
+            int n;
+            cout << "Enter no of clients: ";
+            cin >> n;
+            arr.resize(n);
+            hashfunc(n);
+        } else if (CH == 2) {
+            Search();
+        } else if (CH == 3) {
+            cout << "Exiting....\n";
+            break;
+        } else {
+            cout << "Wrong Choice!!!\n";
+        }
+    }
+
+    return 0;
+}
